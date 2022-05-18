@@ -4,7 +4,7 @@ import { reset as resetForm, initialize } from 'redux-form'
 import { showTabs, selectTab } from '../common/tab/tabActions'
 
 const BASE_URL = 'http://localhost:3003/api'
-const INITIAL_VALUES = { credits: [{}], debts:[{}] }
+const INITIAL_VALUES = {credits: [{}], debts: [{}]}
 
 export function getList() {
     const request = axios.get(`${BASE_URL}/billingCycles`)
@@ -18,39 +18,38 @@ export function create(values) {
     return submit(values, 'post')
 }
 
-function submit(values, method) {
-    
-    return dispatch => {
-        const id = values._id ? values._id : ''
-        axios[method](`${BASE_URL}/billingCycles/${id}`, values)
-        .then(_ => {
-            toastr.success('Success', 'Operation Successfull')
-            dispatch(init())
-        })
-        .catch(e => {
-            e.response.data.errors.forEach(error => toastr.error('Error', error))
-        })
-    } 
-}
-
 export function update(values) {
-    return submit(values, put)
+    return submit(values, 'put')
 }
 
-export function remove (values) {
+export function remove(values) {
     return submit(values, 'delete')
 }
 
+function submit(values, method) {
+    return dispatch => {
+        const id = values._id ? values._id : ''
+        axios[method](`${BASE_URL}/billingCycles/${id}`, values)
+            .then(resp => {
+                toastr.success('Sucesso', 'Operação Realizada com sucesso.')
+                dispatch(init())
+            })
+            .catch(e => {
+                e.response.data.errors.forEach(error => toastr.error('Erro', error))
+            })
+    }
+}
+
 export function showUpdate(billingCycle) {
-    return [
+    return [ 
         showTabs('tabUpdate'),
         selectTab('tabUpdate'),
         initialize('billingCycleForm', billingCycle)
     ]
 }
 
-export function showDelete (billingCycle) {
-    return [
+export function showDelete(billingCycle) {
+    return [ 
         showTabs('tabDelete'),
         selectTab('tabDelete'),
         initialize('billingCycleForm', billingCycle)
